@@ -1,0 +1,32 @@
+{
+  "name": "toolingtools",
+  "interface": {
+    "displayName": "ToolingTools"
+  },
+  "plugins": [
+    {
+      "name": "simview",
+      "source": {
+        "source": "npm",
+        "package": "simview"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    },
+    {
+      "name": "metro-mcp",
+      "source": {
+        "source": "npm",
+        "package": "metro-mcp"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "name": "toolingtools",
+  "owner": {
+    "name": "ToolingTools",
+    "url": "https://github.com/toolingtools"
+  },
+  "description": "Developer tools for inspecting, controlling, and debugging iOS and React Native applications.",
+  "plugins": [
+    {
+      "name": "simview",
+      "source": {
+        "source": "npm",
+        "package": "simview"
+      },
+      "description": "Open, inspect, control, and annotate a local iOS Simulator through MCP.",
+      "homepage": "https://github.com/toolingtools/simview",
+      "repository": "https://github.com/toolingtools/simview",
+      "license": "Apache-2.0",
+      "keywords": [
+        "ios",
+        "simulator",
+        "mcp",
+        "testing"
+      ],
+      "category": "Developer Tools"
+    },
+    {
+      "name": "metro-mcp",
+      "source": {
+        "source": "npm",
+        "package": "metro-mcp"
+      },
+      "description": "Debug, inspect, and automate React Native and Expo apps through Metro and CDP.",
+      "homepage": "https://metromcp.dev",
+      "repository": "https://github.com/steve228uk/metro-mcp",
+      "license": "MIT",
+      "keywords": [
+        "react-native",
+        "expo",
+        "metro",
+        "cdp",
+        "mcp"
+      ],
+      "category": "Developer Tools"
+    }
+  ]
+}

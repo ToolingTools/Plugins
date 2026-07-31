@@ -1,0 +1,125 @@
+#!/usr/bin/env python3
+"""Validate the shared Codex and Claude Code marketplace catalogs."""
+
+from __future__ import annotations
+
+import json
+import sys
+from pathlib import Path
+from typing import Any
+
+
+ROOT = Path(__file__).resolve().parents[1]
+EXPECTED_PACKAGES = {
+    "simview": "simview",
+    "metro-mcp": "metro-mcp",
+}
+
+
+def fail(message: str) -> None:
+    print(f"error: {message}", file=sys.stderr)
+    raise SystemExit(1)
+
+
+def load_json(relative_path: str) -> dict[str, Any]:
+    path = ROOT / relative_path
+    if not path.is_file():
+        fail(f"missing {relative_path}")
+    try:
+        with path.open(encoding="utf-8") as handle:
+            value = json.load(handle)
+    except json.JSONDecodeError as error:
+        fail(f"{relative_path} is not valid JSON: {error}")
+    if not isinstance(value, dict):
+        fail(f"{relative_path} must contain a JSON object")
+    return value
+
+
+def plugins(catalog: dict[str, Any], label: str) -> dict[str, dict[str, Any]]:
+    entries = catalog.get("plugins")
+    if not isinstance(entries, list):
+        fail(f"{label}.plugins must be an array")
+
+    result: dict[str, dict[str, Any]] = {}
+    for entry in entries:
+        if not isinstance(entry, dict):
+            fail(f"{label}.plugins entries must be objects")
+        name = entry.get("name")
+        if not isinstance(name, str) or not name:
+            fail(f"{label} has a plugin without a name")
+        if name in result:
+            fail(f"{label} contains duplicate plugin {name!r}")
+        result[name] = entry
+
+    expected_names = set(EXPECTED_PACKAGES)
+    if set(result) != expected_names:
+        fail(
+            f"{label} must contain exactly {sorted(expected_names)}, "
+            f"found {sorted(result)}"
+        )
+    return result
+
+
+def check_npm_source(entry: dict[str, Any], plugin_name: str, label: str) -> None:
+    source = entry.get("source")
+    if not isinstance(source, dict):
+        fail(f"{label}.{plugin_name}.source must be an object")
+    if source.get("source") != "npm":
+        fail(f"{label}.{plugin_name} must use an npm source")
+    if source.get("package") != EXPECTED_PACKAGES[plugin_name]:
+        fail(
+            f"{label}.{plugin_name} must use npm package "
+            f"{EXPECTED_PACKAGES[plugin_name]!r}"
+        )
+
+
+def validate_codex(catalog: dict[str, Any]) -> None:
+    if catalog.get("name") != "toolingtools":
+        fail("Codex marketplace name must be 'toolingtools'")
+    interface = catalog.get("interface")
+    if not isinstance(interface, dict) or interface.get("displayName") != "ToolingTools":
+        fail("Codex marketplace must have interface.displayName 'ToolingTools'")
+
+    entries = plugins(catalog, "Codex marketplace")
+    for name, entry in entries.items():
+        check_npm_source(entry, name, "Codex marketplace")
+        policy = entry.get("policy")
+        if not isinstance(policy, dict):
+            fail(f"Codex marketplace.{name}.policy must be an object")
+        if policy.get("installation") not in {
+            "AVAILABLE",
+            "INSTALLED_BY_DEFAULT",
+            "NOT_AVAILABLE",
+        }:
+            fail(f"Codex marketplace.{name}.policy.installation is invalid")
+        if policy.get("authentication") not in {"ON_INSTALL", "ON_USE"}:
+            fail(f"Codex marketplace.{name}.policy.authentication is invalid")
+        if entry.get("category") != "Developer Tools":
+            fail(f"Codex marketplace.{name}.category must be 'Developer Tools'")
+
+
+def validate_claude(catalog: dict[str, Any]) -> None:
+    if catalog.get("name") != "toolingtools":
+        fail("Claude marketplace name must be 'toolingtools'")
+    owner = catalog.get("owner")
+    if not isinstance(owner, dict) or owner.get("name") != "ToolingTools":
+        fail("Claude marketplace must have owner.name 'ToolingTools'")
+
+    entries = plugins(catalog, "Claude marketplace")
+    for name, entry in entries.items():
+        check_npm_source(entry, name, "Claude marketplace")
+        if entry.get("category") != "Developer Tools":
+            fail(f"Claude marketplace.{name}.category must be 'Developer Tools'")
+
+
+def main() -> None:
+    if (ROOT / "plugins").exists():
+        fail("catalog-only repository must not contain a plugins/ directory")
+
+    validate_codex(load_json(".agents/plugins/marketplace.json"))
+    validate_claude(load_json(".claude-plugin/marketplace.json"))
+    print("Catalogs are valid and npm-backed.")
+
+
+if __name__ == "__main__":
+    main()
