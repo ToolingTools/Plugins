@@ -8,7 +8,7 @@
       "name": "simview",
       "source": {
         "source": "npm",
-        "package": "simview"
+        "package": "@toolingtools/simview"
       },
       "policy": {
         "installation": "AVAILABLE",

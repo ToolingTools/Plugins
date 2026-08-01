@@ -10,7 +10,7 @@
       "name": "simview",
       "source": {
         "source": "npm",
-        "package": "simview"
+        "package": "@toolingtools/simview"
       },
       "description": "Open, inspect, control, and annotate a local iOS Simulator through MCP.",
       "homepage": "https://github.com/toolingtools/simview",

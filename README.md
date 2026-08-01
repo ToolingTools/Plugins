@@ -52,7 +52,7 @@ The npm package named by each marketplace entry must contain the plugin manifest
 - `.mcp.json` and any skills or assets referenced by those manifests.
 - Built runtime files required by the package's MCP server.
 
-Metro MCP is currently published as `metro-mcp` and should continue to be released from [its source repository](https://github.com/steve228uk/metro-mcp). SimView is listed as `simview` and will become installable from this catalog once that npm package is published.
+Metro MCP is currently published as `metro-mcp` and should continue to be released from [its source repository](https://github.com/steve228uk/metro-mcp). SimView is listed as `simview` and resolves to the scoped npm package `@toolingtools/simview`.
 
 After publishing a new package version, refresh the marketplace and reinstall or update the plugin in the relevant client. Do not commit release binaries or package archives to this repository.
 

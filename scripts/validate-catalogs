@@ -11,7 +11,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 EXPECTED_PACKAGES = {
-    "simview": "simview",
+    "simview": "@toolingtools/simview",
     "metro-mcp": "metro-mcp",
 }
 
